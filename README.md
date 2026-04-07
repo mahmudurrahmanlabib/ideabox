@@ -88,46 +88,27 @@ Navigate to http://localhost:8000 in your web browser to view the application.
 
 ## Docker Deployment
 
-This repository includes a production-focused Docker setup built around `docker compose`.
+The repository includes a production-focused Docker stack for Laravel and MySQL.
 
-1. Copy the Docker env template and fill in your production values:
-
-   ```bash
-   cp .env.docker.example .env
-   ```
-
-2. Generate a stable application key and place it in `APP_KEY` inside `.env`:
-
-   ```bash
-   docker run --rm php:8.3-cli php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
-   ```
-
-3. Set `APP_URL` to the public HTTPS URL you will deploy behind. This is required for correct GitHub OAuth callbacks and webhook URLs.
-
-4. Build and start the deployment stack:
-
-   ```bash
-   docker compose up -d --build
-   ```
-
-5. Optionally seed the first deployment:
-
-   ```bash
-   docker compose exec app php artisan db:seed --force
-   ```
-
-6. Open the application at `http://localhost:8080` locally, or at your deployed domain. Container health is exposed at `/up`.
-
-### Updating a Deployment
-
-Future updates follow the same rebuild-and-redeploy flow:
+Quick start:
 
 ```bash
-git pull
+cp .env.docker.example .env
+docker run --rm php:8.3-cli php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
 docker compose up -d --build
 ```
 
-The app container automatically waits for MySQL, runs `php artisan migrate --force`, ensures `public/storage` is linked, and warms Laravel's config and view caches on startup.
+Set `APP_KEY` in `.env`, configure the `DB_*` values, and set `APP_URL` to the public HTTPS URL used for deployment.
+
+Optional first-time seed:
+
+```bash
+docker compose exec app php artisan db:seed --force
+```
+
+The app is available on `http://localhost:8080` locally, and health is exposed at `/up`.
+
+See the full guide in [docs/docker-deployment.md](docs/docker-deployment.md).
 
 ### Contributing
 
